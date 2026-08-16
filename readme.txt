@@ -76,6 +76,11 @@ Yes. The plugin detects WooCommerce blocks (`woocommerce/cart`, `woocommerce/che
 
 No. `wc-cart-fragments` is only dequeued on pages that have no cart-related content. Pages with the WooCommerce Cart block or the classic cart page always keep the script.
 
+== Screenshots ==
+
+1. The plugin row in Plugins > Installed Plugins — zero configuration, no Settings link, active and working immediately.
+2. A WooCommerce shop page loading normally — unused scripts and styles silently removed in the background.
+
 == Changelog ==
 
 = 1.0.0 — 2026-08-15 =
