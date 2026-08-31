@@ -73,3 +73,36 @@ The notice appears only on the Accelerator tab.
 - No database tables, no scheduled work, no HTTP requests.
 - One option, `bfsa_features`, removed on uninstall.
 - Nothing runs in wp-admin except the settings tab and the notices.
+
+---
+
+## What Store Accelerator Pro adds
+
+You are running the free half. Everything above is yours for good. What follows is what the paid add-on does on top of it — it installs alongside this plugin and adds its switches to the same tab.
+
+| | This plugin | Store Accelerator Pro |
+|---|---|---|
+| Script removal by page context | yes | yes, inherited |
+| Stylesheet removal by page context | yes | yes, inherited |
+| WooCommerce block and shortcode awareness | yes | yes, inherited |
+| Mini-cart detection | yes | yes, inherited |
+| Filterable rules | yes | yes, inherited |
+| Conflict detection | yes | yes, inherited |
+| **Blurred placeholders for product images** | — | **yes** |
+| **Backfill for images uploaded before installation** | — | **yes** |
+| **Reviews, related products and upsells deferred until scrolled to** | — | **yes** |
+| **Product listing queries cached, pagination intact** | — | **yes** |
+| **Database index for product meta lookups** | — | **yes** |
+| **Usage counts, hourly and all time** | — | **yes** |
+| **Redis / Memcached support** | — | **yes** |
+
+### What you are doing without
+
+Every product image on your shop page is downloaded at full size before a shopper has scrolled to it. Every product page renders its reviews, its related products and its upsells whether or not anyone reads them. Every visit to a category page runs the same product query again from the database.
+
+None of that is visible as a fault. It is visible as a shop that takes a little longer than it should, on every page, for every shopper, for as long as the store runs.
+
+Store Accelerator Pro fixes all three, keeps the pagination the naive version of query caching destroys, and tells you on the settings tab exactly how many times it has done so.
+
+**Get it here: https://wordpress.bluefairydevelopment.com/product/bluefairy-store-accelerator-pro/**
+
