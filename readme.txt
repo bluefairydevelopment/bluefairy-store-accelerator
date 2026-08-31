@@ -92,6 +92,11 @@ Yes. This plugin removes assets; a caching plugin stores pages. If one is active
 
 In the Pro add-on. This plugin deliberately stores nothing beyond its two switches.
 
+== Screenshots ==
+
+1. WooCommerce → Settings → Accelerator — one switch per feature, both on by default.
+2. The plugins list row, with the link to the Pro add-on.
+
 == Changelog ==
 
 = 1.1.0 =
