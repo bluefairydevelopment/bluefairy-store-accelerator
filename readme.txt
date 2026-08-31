@@ -1,97 +1,108 @@
-=== BlueFairy Store Accelerator Lite for WooCommerce ===
+=== BlueFairy Store Accelerator ===
 Contributors: bluefairydevelopment
-Tags: woocommerce, performance, speed, optimization, scripts
+Tags: woocommerce, performance, speed, scripts, optimization
 Requires at least: 6.5
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.1
-WC requires at least: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Remove unused WooCommerce scripts and styles from pages that don't need them — zero config, instant speed gains.
+Removes WooCommerce scripts and stylesheets from the pages that do not need them, and leaves them alone on the pages that do.
 
 == Description ==
 
-WooCommerce loads a number of JavaScript and CSS files on every page of your site by default — even pages that have nothing to do with shopping. Each unnecessary file is a DNS lookup, connection, download, and parse cycle your visitors pay for.
+WooCommerce loads its JavaScript and stylesheets on pages that have nothing to do with shopping. Every one of those is a request your visitor pays for on your About page.
 
-Store Accelerator Lite for WooCommerce removes the worst offenders automatically, using smart page-type detection rather than a simple "is this a WooCommerce page?" check.
+This plugin removes them — carefully. The difficult part is not the removing; it is knowing when not to.
 
-**What gets removed and when:**
+= What it removes, and when =
 
-* **wc-cart-fragments** — The heartbeat script that polls the server to keep your mini-cart count fresh. Removed on every page *except* cart, checkout, and any page containing a WooCommerce cart block. Those are the only places it matters.
-* **select2 / selectWoo** — Dropdown enhancement libraries used for variation selectors and country pickers. Removed on any page that is not a shop archive, single product, cart, checkout, or account page.
-* **WooCommerce layout stylesheets** (`woocommerce-general`, `woocommerce-layout`, `woocommerce-smallscreen`) — Removed on pages that are not WooCommerce pages at all (blog posts, contact page, etc.).
+* **wc-cart-fragments** — the script that keeps a displayed cart count fresh without a page reload. Removed everywhere except the cart, the checkout, and any page where a cart count is actually shown.
+* **select2 / selectWoo** — the dropdown libraries behind variation pickers and country fields. Removed on any page that is not a shop archive, a product, the cart, the checkout or My Account.
+* **woocommerce-general, woocommerce-layout, woocommerce-smallscreen** — the WooCommerce stylesheets. Removed only on pages with no WooCommerce content at all.
 
-**Block theme aware:** The plugin detects `woocommerce/cart`, `woocommerce/checkout`, and `woocommerce/product-collection` blocks in page content and keeps the required scripts active when those blocks are present.
+= Pages that only look like they have no WooCommerce on them =
 
-**Safe by design:**
+A landing page built around a product grid is not a WooCommerce page as far as `is_woocommerce()` is concerned, but its products still have to look like products. The context resolver treats a page carrying any of these as a WooCommerce page for stylesheet purposes:
 
-* Never touches any `wc-blocks-*` handle — block editor scripts are completely off-limits.
-* Dequeues at priority 100, after WooCommerce enqueues at priority 10.
-* Guards every WooCommerce conditional with `function_exists()` — the plugin will not fatal if WooCommerce is deactivated.
-* No database reads or writes. No settings page. Zero configuration.
+`woocommerce/cart`, `woocommerce/checkout`, `woocommerce/mini-cart`, `woocommerce/single-product`, `woocommerce/all-products`, `woocommerce/product-collection`, `woocommerce/handpicked-products`, `woocommerce/product-best-sellers`, `woocommerce/product-category`, `woocommerce/product-new`, `woocommerce/product-on-sale`, `woocommerce/product-top-rated`, `woocommerce/product-tag`
 
-**Upgrade to [Store Accelerator Pro](https://wordpress.bluefairydevelopment.com/product/store-accelerator-for-woocommerce/) for:**
+WooCommerce blocks are also recognised as they render, so a front page whose product grid comes from the block template rather than the page's own content keeps its styling.
 
-* LQIP (Low Quality Image Placeholder) lazy loading for product images
-* AJAX lazy-loaded content sections
-* WooCommerce query caching
-* Database index tuning for large catalogs
-* Stats dashboard showing exactly what was optimised on each page load
+The mini-cart is the one block that does not count as WooCommerce content: it is styled separately, and in a block theme it appears in the site header on every page.
+
+The same applies to the `[products]`, `[product_page]`, `[product_category]`, `[add_to_cart]`, `[woocommerce_cart]`, `[woocommerce_checkout]`, `[woocommerce_my_account]` and `[woocommerce_order_tracking]` shortcodes.
+
+= About your cart count =
+
+Removing `wc-cart-fragments` from a page that shows a live cart count freezes that count until the next full page load. This plugin looks for the WooCommerce mini-cart block, the mini-cart in a block theme's header template, and the classic cart widget.
+
+It cannot see a theme that prints the count itself in its own header template — nothing in WordPress exposes that. If your count stops updating, either switch off **Script optimisation**, or tell the plugin the count is there:
+
+`add_filter( 'bfsa_has_mini_cart', '__return_true' );`
+
+= Changing the rules =
+
+Both rule sets are filterable. Each key is a handle; each value lists the page contexts that require it.
+
+`add_filter( 'bfsa_script_rules', function ( $rules ) { unset( $rules['select2'] ); return $rules; } );`
+
+`bfsa_style_rules` works the same way for stylesheets, and `bfsa_page_context` lets you change the resolved context directly. Handles beginning `wc-blocks-` are never removed, whatever the rules say.
+
+= Safety =
+
+* Nothing runs in wp-admin.
+* Removal happens at `wp_enqueue_scripts` priority 100, after WooCommerce enqueues at 10.
+* No database tables, no scheduled work, one option.
+* With WooCommerce inactive the plugin does nothing at all and says so.
+
+== Store Accelerator Pro ==
+
+The paid add-on installs alongside this plugin and adds its switches to the same settings tab:
+
+* Blurred placeholders for product images, generated at upload and backfilled for the images you already have
+* Reviews, related products and upsells loaded when the shopper scrolls to them
+* Product listing queries cached, with pagination intact and invalidation on every route that changes a product
+* One database index for product meta lookups, built in the background
+
+https://wordpress.bluefairydevelopment.com/product/bluefairy-store-accelerator-pro/
 
 == Installation ==
 
-1. Upload the `bluefairy-store-accelerator-lite` folder to `/wp-content/plugins/`.
-2. Activate the plugin from **Plugins > Installed Plugins**.
-3. That's it — no configuration required.
-
-WooCommerce must be installed and active. If it is not, you will see an admin notice as a reminder.
+1. Upload the `bluefairy-store-accelerator` folder to `/wp-content/plugins/`, or install the zip through **Plugins → Add New → Upload Plugin**.
+2. Activate it.
+3. Both switches are on. Settings live under **WooCommerce → Settings → Accelerator**.
 
 == Frequently Asked Questions ==
 
-= Does this work without WooCommerce? =
+= Will this break my site? =
 
-No. Store Accelerator Lite for WooCommerce is specifically built to optimise WooCommerce asset loading. If WooCommerce is not active, the plugin will display an admin notice and disable itself until WooCommerce is available.
+The two things most likely to surprise you are a frozen cart count and a theme that relies on `select2` outside WooCommerce pages. Both are one filter or one switch away from being fixed, and both are described above.
 
-= Will this conflict with caching plugins? =
+= Does it work with a block theme? =
 
-No. The plugin dequeues scripts during the normal WordPress enqueue cycle, before any caching layer captures output. Full-page caching plugins (WP Rocket, W3 Total Cache, LiteSpeed Cache, etc.) will cache the already-optimised output. There are no known conflicts.
+Yes. Block and shortcode detection is how the context is resolved, and the mini-cart scan reads block theme header templates as well as the database.
 
-= What does the Pro version add? =
+= Does it work with a caching plugin? =
 
-[Store Accelerator Pro](https://wordpress.bluefairydevelopment.com/product/store-accelerator-for-woocommerce/) includes everything in Lite plus:
+Yes. This plugin removes assets; a caching plugin stores pages. If one is active you will see a note on the settings tab pointing out where the two might overlap.
 
-* **LQIP images** — Product images load with a blurred low-quality placeholder first, then swap to the full image when it enters the viewport. Reduces perceived load time dramatically.
-* **AJAX lazy sections** — Heavy page sections (related products, recently viewed, etc.) are loaded via AJAX after the main content, keeping Time to First Byte and LCP fast.
-* **Query caching** — Frequently repeated WooCommerce database queries are cached in the WordPress object cache, reducing database load on busy stores.
-* **DB index tuning** — Adds targeted indexes to WooCommerce tables that commonly cause full-table scans on large catalogs.
-* **Stats dashboard** — See exactly how many scripts were dequeued, how many queries were served from cache, and what index improvements were applied — on every page load.
+= Where are the statistics? =
 
-= Does it work with block themes (Full Site Editing)? =
-
-Yes. The plugin detects WooCommerce blocks (`woocommerce/cart`, `woocommerce/checkout`, `woocommerce/product-collection`) in post content and keeps the required scripts active whenever those blocks are present.
-
-= Will it break my mini-cart widget? =
-
-No. `wc-cart-fragments` is only dequeued on pages that have no cart-related content. Pages with the WooCommerce Cart block or the classic cart page always keep the script.
-
-== Screenshots ==
-
-1. The plugin row in Plugins > Installed Plugins — zero configuration, no Settings link, active and working immediately.
-2. A WooCommerce shop page loading normally — unused scripts and styles silently removed in the background.
+In the Pro add-on. This plugin deliberately stores nothing beyond its two switches.
 
 == Changelog ==
 
-= 1.0.0 — 2026-08-15 =
-* Initial release.
-* Page-type-aware dequeuing of `wc-cart-fragments`, `select2`, and `selectWoo`.
-* Dequeuing of WooCommerce layout stylesheets on non-WooCommerce pages.
-* Block theme awareness for cart, checkout, and product collection blocks.
-* Admin notice when WooCommerce is not active.
-* "Upgrade to Pro →" action link in the Plugins list table.
-
-== Upgrade Notice ==
+= 1.1.0 =
+* Rebuilt as the base plugin for Store Accelerator Pro, which is now an add-on rather than a separate plugin that repeated this one's work.
+* Fixed: a page whose only WooCommerce content was a block or shortcode had all three WooCommerce stylesheets removed, so its products rendered unstyled.
+* Fixed: WooCommerce blocks rendered by a block theme's templates were invisible to the context resolver, which read only the queried post's content — so a front page whose product grid came from the template lost all three stylesheets.
+* Fixed: `wc-cart-fragments` was removed from every page outside the cart and checkout with no check for a displayed cart count, freezing the count on themes that show one.
+* Added: `bfsa_script_rules`, `bfsa_style_rules`, `bfsa_page_context` and `bfsa_has_mini_cart` filters. 1.0.0 had none, so a site whose theme needed a handle could only deactivate the plugin.
+* Added: a settings tab with a switch per feature.
+* Added: stylesheet removal is now its own switch, separate from scripts.
+* Changed: conflicting-plugin detection now runs per request instead of once at activation, so installing or removing a caching plugin afterwards is noticed.
 
 = 1.0.0 =
-Initial release. No upgrade steps required.
+* First release.

@@ -1,18 +1,19 @@
 <?php
 /**
- * Uninstall handler for BlueFairy Store Accelerator Lite.
+ * Removes what this plugin stored.
  *
- * Runs when the plugin is deleted via the WordPress admin (Plugins > Delete).
- * This plugin stores no options, transients, or database tables, so there is
- * nothing to remove. The file exists to satisfy WordPress uninstall conventions.
- *
- * @package BlueFairy_Store_Accelerator_Lite
+ * @package BlueFairy\StoreAccelerator
  */
 
 declare(strict_types=1);
 
-if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-	exit;
+if (! defined('WP_UNINSTALL_PLUGIN')) {
+    exit;
 }
 
-// No options, transients, or tables to remove — this plugin is zero-config.
+// Only our own keys, named one by one. A LIKE 'bfsa%' sweep would also take
+// the Pro add-on's bfsap_ options with it.
+delete_option('bfsa_features');
+
+// The mini-cart scan is cached per theme, so the key is not knowable here;
+// it expires on its own within a day and is harmless in the meantime.

@@ -1,10 +1,6 @@
-vendor/
-node_modules/
 .DS_Store
-*.log
-.env
-.idea/
-.vscode/
-/tmp/
+node_modules/
+vendor/
+.phpunit.cache/
+.cache/
 *.zip
-docs/screenshots/
