@@ -1,5 +1,6 @@
 === BlueFairy Store Accelerator ===
 Contributors: bluefairydevelopment
+Donate link: https://ko-fi.com/bluefairydevelopment
 Tags: woocommerce, performance, speed, scripts, optimization
 Requires at least: 6.5
 Tested up to: 7.1
