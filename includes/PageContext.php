@@ -315,7 +315,7 @@ class PageContext
                     continue;
                 }
 
-                if (str_contains((string) ($part->content ?? ''), 'wp:woocommerce/mini-cart')) {
+                if (str_contains((string) $part->content, 'wp:woocommerce/mini-cart')) {
                     $found = true;
                     break;
                 }
